@@ -147,3 +147,8 @@ DECSTBM = "r"
 
 #: *Horizontal position adjust*: Same as :data:`CHA`.
 HPA = "'"
+
+#: OSC (Operating System Command) sequences are either terminated with
+#: ST (0x5c) or BEL (0x07)
+ST  = "\x5c"
+BEL = "\x07"

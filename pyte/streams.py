@@ -108,6 +108,8 @@ class Stream(object):
         esc.SGR: "select_graphic_rendition",
         esc.DECSTBM: "set_margins",
         esc.HPA: "cursor_to_column",
+        esc.ST: "os_command",
+        esc.BEL: "os_command"
     }
 
     def __init__(self):
@@ -116,7 +118,8 @@ class Stream(object):
             "escape": self._escape,
             "arguments": self._arguments,
             "sharp": self._sharp,
-            "charset": self._charset
+            "charset": self._charset,
+            "oscommand": self._oscommand
         }
 
         self.listeners = []
@@ -247,6 +250,8 @@ class Stream(object):
         elif char in "()":
             self.state = "charset"
             self.flags["mode"] = char
+        elif char == "]":
+            self.state = "oscommand"
         else:
             self.dispatch(self.escape[char])
 
@@ -299,6 +304,24 @@ class Stream(object):
                 self.current = ""
             else:
                 self.dispatch(self.csi[char], *self.params)
+
+    def _oscommand(self, char):
+        """Parse arguments of an Operating System Command.
+        ESC ] n ; <txt> <ST or BEL>
+        """
+        numparam = len(self.params) and isinstance(self.params[0], int)
+        if numparam:
+            if char == esc.ST or char == esc.BEL:
+                self.params.append(self.current)
+                self.dispatch(self.csi[char], *self.params)
+            else:
+                self.current += char
+        else:
+            if char == ";":
+                self.params.append(min(int(self.current or 0), 9999))
+                self.current = ""
+            else:
+                self.current += char
 
 
 class ByteStream(Stream):
