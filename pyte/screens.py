@@ -858,6 +858,7 @@ class DiffScreen(Screen):
         super(DiffScreen, self).reset()
 
     def resize(self, *args, **kwargs):
+        self.dirty.clear()
         self.dirty.update(range(self.lines))
         super(DiffScreen, self).resize(*args, **kwargs)
 
