@@ -56,3 +56,7 @@ DECAWM = 7 << 5
 #: *Column Mode*: selects the number of columns per line (80 or 132)
 #: on the screen.
 DECCOLM = 3 << 5
+
+#: *Applications Mode*: Use slightly different keysequences for
+#: function, numpad and arrow keys
+DECAPP = 1 << 5
